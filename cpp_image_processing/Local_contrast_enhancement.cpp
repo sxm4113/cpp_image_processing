@@ -14,7 +14,7 @@ void LocalContrastEnhancement::run_algorithm() {
     Mat down_conv_filtered = convolution_image(down_padded);
     Mat up_sampled = upsample(down_conv_filtered);
     Mat up_padded = symmetric_boundary(up_sampled, 5);
-    Mat up_conv_filtered = convolution_image(up_padded);
+    Mat up_conv_filtered = convolution_image(up_padded); 
     cout << "convolution finished" << endl;
     Mat output = rolp(original_image, up_conv_filtered);
     cout << "rolp finished" << endl;

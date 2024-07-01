@@ -7,7 +7,7 @@
 #include "Local_contrast_enhancement.h"
 
 int main() {
-    Image img{ "input.jpg" };
+    Image img{ "../image/input.jpg" };
     std::cout << img << std::endl;
     LocalContrastEnhancement result{ img };
 
