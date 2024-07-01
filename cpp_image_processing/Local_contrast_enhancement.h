@@ -15,13 +15,13 @@ public:
 	/// constructor</summary>
 	LocalContrastEnhancement(Image img);
 
-	void HistEqualization(Mat img);
-	Mat adjustment(Mat original_image, Mat rolp_result);
-	Mat rolp(Mat original_image, Mat expanded);
-	Mat upsample(Mat original_image);
-	Mat downsample(Mat original_image); 
-	Mat convolution_image(Mat image );
-	Mat symmetric_boundary(Mat image, int scale);
+	void HistEqualization(Mat &img);
+	void adjustment(Mat &original_image, const Mat &rolp_result);
+	Mat rolp(const Mat &original_image, const Mat &expanded);
+	Mat upsample(const Mat &original_image);
+	Mat downsample(const Mat &original_image); 
+	Mat convolution_image(const Mat &image );
+	void symmetric_boundary(Mat &image, int scale);
 	void run_algorithm();
 
 	Mat get_enhanced_image();  

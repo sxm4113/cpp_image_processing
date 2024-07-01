@@ -10,15 +10,15 @@ LocalContrastEnhancement::LocalContrastEnhancement(Image img) {
 void LocalContrastEnhancement::run_algorithm() {
      
     Mat downsampled_image = downsample(original_image); 
-    Mat down_padded = symmetric_boundary(downsampled_image, 5);
-    Mat down_conv_filtered = convolution_image(down_padded);
+    symmetric_boundary(downsampled_image, 5);
+    Mat down_conv_filtered = convolution_image(downsampled_image);
     Mat up_sampled = upsample(down_conv_filtered);
-    Mat up_padded = symmetric_boundary(up_sampled, 5);
-    Mat up_conv_filtered = convolution_image(up_padded); 
+    symmetric_boundary(up_sampled, 5);
+    Mat up_conv_filtered = convolution_image(up_sampled);
     cout << "convolution finished" << endl;
     Mat output = rolp(original_image, up_conv_filtered);
     cout << "rolp finished" << endl;
-    enhanced_image = adjustment(original_image, output);
+    adjustment(original_image, output);
      
   
 };
@@ -26,17 +26,11 @@ void LocalContrastEnhancement::run_algorithm() {
 Mat LocalContrastEnhancement::get_enhanced_image() {return enhanced_image;}
 
 /*shrink the size of image*/
-Mat LocalContrastEnhancement::downsample(Mat original_image)
+Mat LocalContrastEnhancement::downsample(const Mat &original_image)
 {
-
-
-    Mat downsampled_image = Mat::zeros(HEIGHT / 2, WIDTH / 2, CV_8U);
-
-    Mat_<uchar>::iterator original_itr = original_image.begin<uchar>();
-    Mat_<uchar>::iterator original_end = original_image.end<uchar>();
-    Mat_<uchar>::iterator new_image_itr = downsampled_image.begin<uchar>();
      
-
+    Mat downsampled_image = Mat::zeros(HEIGHT / 2, WIDTH / 2, CV_8U);
+ 
     for (int i = 0; i < WIDTH; i += 2)
         for (int j = 0; j < HEIGHT; j += 2)
             if (i%2 == 0 && j%2 == 0)
@@ -49,7 +43,7 @@ Mat LocalContrastEnhancement::downsample(Mat original_image)
 * input : input image
 * output : CHE image
 */
-void LocalContrastEnhancement::HistEqualization(Mat img) {
+void LocalContrastEnhancement::HistEqualization(Mat &img) {
     int clip{ 0 };
     int idx{ 0 };  
     Mat result;
@@ -148,7 +142,7 @@ void LocalContrastEnhancement::HistEqualization(Mat img) {
 /*add extra rows and cols (padding)*/
 //input : full size image, size of filter
 //output : padded image.
-Mat LocalContrastEnhancement::symmetric_boundary(Mat image, int scale) {
+void LocalContrastEnhancement::symmetric_boundary(Mat &image, int scale) {
 
     int height_symm = image.rows;
     int width_symm = image.cols;
@@ -176,13 +170,13 @@ Mat LocalContrastEnhancement::symmetric_boundary(Mat image, int scale) {
         //bottom right corner
         image(Range(height_symm - extra, height_symm), Range(width_symm - extra, width_symm)).copyTo(image_symmetric(Range(height_symm + extra, height_symm + extra * 2), Range(width_symm + extra, width_symm + extra * 2)));
     }
-    return image_symmetric;
+    image = image_symmetric;
 }
 
 /*calculate convolution*/
 //input : 5 by 5 image, filter
 //output : pixel value of the center of 5 by 5 image. 
-Mat LocalContrastEnhancement::convolution_image(Mat image )
+Mat LocalContrastEnhancement::convolution_image(const Mat &image )
 {
     int scale = 5;
     auto convolution=[](Mat sub_image)
@@ -222,7 +216,7 @@ Mat LocalContrastEnhancement::convolution_image(Mat image )
 }
 
 /*expand the size of image*/
-Mat LocalContrastEnhancement::upsample(Mat original_image)
+Mat LocalContrastEnhancement::upsample(const Mat &original_image)
 {
     Mat upsampled_image = Mat::zeros(HEIGHT, WIDTH, CV_8U);
     for (int i = 0; i < WIDTH; i += 2)
@@ -236,7 +230,7 @@ Mat LocalContrastEnhancement::upsample(Mat original_image)
 }
 
 /*find ROLP (ratio of lowpass)*/
-Mat LocalContrastEnhancement::rolp(Mat original_image, Mat expanded)
+Mat LocalContrastEnhancement::rolp(const Mat &original_image, const Mat &expanded)
 {
     Mat output(original_image.rows, original_image.cols, CV_32FC1); 
     Mat float_expanded;
@@ -266,7 +260,7 @@ Mat LocalContrastEnhancement::rolp(Mat original_image, Mat expanded)
     return output;
 }
 
-Mat LocalContrastEnhancement::adjustment(Mat original_image, Mat rolp_result)
+void LocalContrastEnhancement::adjustment(Mat &original_image, const Mat &rolp_result)
 {
     int final_value{ 0 };
     Mat CEG256 (original_image.rows, original_image.cols, CV_8U);
@@ -323,5 +317,5 @@ Mat LocalContrastEnhancement::adjustment(Mat original_image, Mat rolp_result)
 
         }
     }
-    return CEG256;
+    enhanced_image=CEG256;
 }
