@@ -7,16 +7,14 @@
 #include "Local_contrast_enhancement.h"
 
 int main() {
-    Image img{ "../image/input.jpg" };
-    std::cout << img << std::endl;
-    LocalContrastEnhancement result{ img };
+  Image img{"../image/input.jpg"};
+  std::cout << img << std::endl;
+  LocalContrastEnhancement result{img};
 
-    std::cout << "Run Algorithm .. ." << std::endl;
-    result.run_algorithm();  
-    cv::imshow("Display Window", result.get_enhanced_image());
-    cv::waitKey(0);
-     
+  std::cout << "Run Algorithm .. ." << std::endl;
+  result.run_algorithm();
+  cv::imshow("Display Window", result.get_enhanced_image());
+  cv::waitKey(0);
 
-    return 0;
+  return 0;
 }
-

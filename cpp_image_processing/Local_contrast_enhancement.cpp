@@ -1,27 +1,24 @@
 #include "Local_contrast_enhancement.h"
 
 using namespace cv;
- 
-LocalContrastEnhancement::LocalContrastEnhancement(Image& img) 
-    :original_image {img.get_image()},
-    enhanced_image  {Mat(img.get_rows(), img.get_cols(), CV_8U)},
-    HEIGHT {img.get_rows()},
-    WIDTH  {img.get_cols()} {}
+
+LocalContrastEnhancement::LocalContrastEnhancement(Image &img)
+    : original_image{img.get_image()},
+      enhanced_image{Mat(img.get_rows(), img.get_cols(), CV_8U)},
+      HEIGHT{img.get_rows()},
+      WIDTH{img.get_cols()} {}
 
 void LocalContrastEnhancement::run_algorithm() {
-     
-    Mat downsampled_image = downsample(original_image); 
-    symmetric_boundary(downsampled_image, 5);
-    Mat down_conv_filtered = convolution_image(downsampled_image);
-    Mat up_sampled = upsample(down_conv_filtered);
-    symmetric_boundary(up_sampled, 5);
-    Mat up_conv_filtered = convolution_image(up_sampled);
-    cout << "convolution finished" << endl;
-    Mat output = rolp(original_image, up_conv_filtered);
-    cout << "rolp finished" << endl;
-    adjustment(original_image, output);
-     
-  
+  Mat downsampled_image = downsample(original_image);
+  symmetric_boundary(downsampled_image, 5);
+  Mat down_conv_filtered = convolution_image(downsampled_image);
+  Mat up_sampled = upsample(down_conv_filtered);
+  symmetric_boundary(up_sampled, 5);
+  Mat up_conv_filtered = convolution_image(up_sampled);
+  cout << "convolution finished" << endl;
+  Mat output = rolp(original_image, up_conv_filtered);
+  cout << "rolp finished" << endl;
+  adjustment(original_image, output);
 };
 
 Mat LocalContrastEnhancement::get_enhanced_image() {return enhanced_image;}

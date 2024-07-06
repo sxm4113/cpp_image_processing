@@ -1,5 +1,4 @@
-#ifndef _IMAGE_H_
-#define _IMAGE_H_
+#pragma once
 #include <opencv2/opencv.hpp>
 #include <map>
 #include <memory>
@@ -9,14 +8,16 @@ using namespace std;
 class Image {
     friend std::ostream& operator<<(std::ostream& os, const Image& obj);
 
-private: cv::Mat image;
-       std::string img_dir; 
-public: explicit Image(std::string imagePath);
-        ~Image();
-        void display();
-        cv::Mat get_image();
-        int get_rows();
-        int get_cols();
+   private:
+    cv::Mat image;
+    std::string img_dir;
 
-};
-#endif //_IMAGE_H_
+   public:
+    explicit Image(std::string imagePath);
+    ~Image();
+    void display();
+    cv::Mat get_image();
+    int get_rows();
+    int get_cols();
+
+}; 
