@@ -1,11 +1,12 @@
 #include "Local_contrast_enhancement.h"
+
+using namespace cv;
  
-LocalContrastEnhancement::LocalContrastEnhancement(Image img) {
-    original_image = img.get_image();
-    enhanced_image = Mat(img.get_rows(), img.get_cols(), CV_8U);
-    HEIGHT = img.get_rows();
-    WIDTH = img.get_cols();
-}
+LocalContrastEnhancement::LocalContrastEnhancement(Image& img) 
+    :original_image {img.get_image()},
+    enhanced_image  {Mat(img.get_rows(), img.get_cols(), CV_8U)},
+    HEIGHT {img.get_rows()},
+    WIDTH  {img.get_cols()} {}
 
 void LocalContrastEnhancement::run_algorithm() {
      
@@ -26,7 +27,7 @@ void LocalContrastEnhancement::run_algorithm() {
 Mat LocalContrastEnhancement::get_enhanced_image() {return enhanced_image;}
 
 /*shrink the size of image*/
-Mat LocalContrastEnhancement::downsample(const Mat &original_image)
+Mat LocalContrastEnhancement::downsample(const Mat& original_image)
 {
      
     Mat downsampled_image = Mat::zeros(HEIGHT / 2, WIDTH / 2, CV_8U);
@@ -38,106 +39,6 @@ Mat LocalContrastEnhancement::downsample(const Mat &original_image)
  
     return downsampled_image;
 }
-
-/*Clipped histogram equalization
-* input : input image
-* output : CHE image
-*/
-void LocalContrastEnhancement::HistEqualization(Mat &img) {
-    int clip{ 0 };
-    int idx{ 0 };  
-    Mat result;
-    int* px = new int[256]{};
-    int* px_copy = new int[256]{};
-    float* CDF = new float[256]{};
-    float* normalize = new float[256]{};
-
-    //find PDF
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            idx = img.at<uchar>(i, j);
-            px[idx] ++;
-        }
-    }
-    cout << "find pdf" << endl;
-    px_copy = px;
-
-    int exceed_count{ 0 };
-
-    //find clip value that makes the exceeded number of pixel same as not exceeded number of pixel. 
-    while (exceed_count < (HEIGHT * WIDTH) / 2) {
-        for (int i = 0; i < 256; i++) {
-            if (px_copy[i] > 0) {
-                px_copy[i] -= 1;
-                exceed_count += 1;
-            }
-            if (exceed_count == (HEIGHT * WIDTH) / 2) {
-
-                break;
-            }
-        }
-        clip += 1;
-    }
-    cout << "find clip" << endl;
-    //find total exceeded pixels 
-    int exceed = 0;
-    for (int i = 0; i < 256; i++) {
-        if (px[i] > clip) {
-
-            exceed += px[i] - clip;
-            px[i] = clip;
-        }
-    }
-
-    //distribute exceeded pixels over the bins
-    while (exceed > 0) {
-        for (int j = 0; j < 256; j++) {
-            if (px[j] > 0) {
-
-                px[j] += 1;
-                exceed -= 1;
-
-            }
-            if (exceed == 0) { break; }
-        }
-    }
-    cout << "distribute exceeded pixels" << endl;
-    // calculate CDF corresponding to px 
-    int accumulation = 0;
-    for (int i = 0; i < 256; i++) {
-        accumulation += px[i];
-        CDF[i] = accumulation;
-    }
-    cout << "distribute exceeded pixels ended" << endl;
-    // using general histogram equalization formula 
- 
-    for (int i = 0; i < 256; i++) {
-        normalize[i] = ((CDF[i] - CDF[0]) / (img.rows * img.cols - CDF[0])) * 255;
-        normalize[i] = static_cast<uchar>(normalize[i]);
-    }
-    cout << "normalize ended" << endl;
-    /*Mat enhanced_image(img.rows, img.cols, CV_8U);*/
-    cout << "normalize ended1" << endl;
-    Mat_<uchar>::iterator it_out = enhanced_image.begin<uchar>();
-    cout << "normalize ended2" << endl; 
-    Mat_<uchar>::iterator it_ori = img.begin<uchar>();
-    cout << "normalize ended3" << endl;
-    Mat_<uchar>::iterator itend_ori = img.end<uchar>();
-
-    cout << "enhanced_image assignment" << endl;
-
-    for (; it_ori != itend_ori; it_ori++) {
-
-        uchar pixel_value = static_cast<uchar>(*it_ori);
-        *it_out = normalize[pixel_value];
-        it_out++;
-    }                
-
-    delete[] px; 
-    delete[] normalize;
-    delete[] CDF;
-
-};
 
 /*add extra rows and cols (padding)*/
 //input : full size image, size of filter
@@ -202,8 +103,7 @@ Mat LocalContrastEnhancement::convolution_image(const Mat &image )
     }; 
 
     Mat output(HEIGHT, WIDTH, CV_8U); 
-
-    auto duration_roiImage_sum = 0;
+ 
     for (int i = scale  / 2; i < image.cols - scale / 2; i++) {
         for (int j = scale / 2; j < image.rows - scale / 2; j++) {
              
@@ -264,8 +164,7 @@ void LocalContrastEnhancement::adjustment(Mat &original_image, const Mat &rolp_r
 {
     int final_value{ 0 };
     Mat CEG256 (original_image.rows, original_image.cols, CV_8U);
-    uchar CE_EXP;
-    int count = 0;
+    uchar CE_EXP; 
     for (int i = 0; i < WIDTH; i++)
     {
         for (int j = 0; j < HEIGHT; j++)

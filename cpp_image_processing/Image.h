@@ -3,20 +3,18 @@
 #include <opencv2/opencv.hpp>
 #include <map>
 #include <memory>
-
-using namespace cv;
+ 
 using namespace std;
 
 class Image {
-    friend ostream& operator<<(ostream& os, const Image& obj);
+    friend std::ostream& operator<<(std::ostream& os, const Image& obj);
 
-private: Mat image;
-       string img_dir; 
-public: Image();
-        Image(string imagePath);
+private: cv::Mat image;
+       std::string img_dir; 
+public: explicit Image(std::string imagePath);
         ~Image();
         void display();
-        Mat get_image();
+        cv::Mat get_image();
         int get_rows();
         int get_cols();
 

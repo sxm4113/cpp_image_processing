@@ -11,7 +11,7 @@ int main() {
     std::cout << img << std::endl;
     LocalContrastEnhancement result{ img };
 
-    cout << "run algorithm" << endl;
+    std::cout << "Run Algorithm .. ." << std::endl;
     result.run_algorithm();  
     cv::imshow("Display Window", result.get_enhanced_image());
     cv::waitKey(0);

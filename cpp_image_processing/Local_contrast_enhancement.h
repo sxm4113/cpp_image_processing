@@ -2,28 +2,29 @@
 #define _LOCAL_CONTRAST_ENHANCEMENT_H_
 #include <opencv2/opencv.hpp>  
 #include "Image.h"
-
-using namespace cv;
+ 
 
 class LocalContrastEnhancement {
 private:
-	Mat enhanced_image; 
-	Mat original_image;
-	int WIDTH;
+	cv::Mat original_image;
+	cv::Mat enhanced_image; 
 	int HEIGHT;
+	int WIDTH;
+	
+
 public:
 	/// constructor</summary>
-	LocalContrastEnhancement(Image img);
+	explicit LocalContrastEnhancement(Image& img);
 
-	void HistEqualization(Mat &img);
-	void adjustment(Mat &original_image, const Mat &rolp_result);
-	Mat rolp(const Mat &original_image, const Mat &expanded);
-	Mat upsample(const Mat &original_image);
-	Mat downsample(const Mat &original_image); 
-	Mat convolution_image(const Mat &image );
-	void symmetric_boundary(Mat &image, int scale);
+	void HistEqualization(cv::Mat &img);
+	void adjustment(cv::Mat& original_image, const cv::Mat& rolp_result);
+	cv::Mat rolp(const cv::Mat& original_image, const cv::Mat& expanded);
+	cv::Mat upsample(const cv::Mat& original_image);
+	cv::Mat downsample(const cv::Mat& original_image); 
+	cv::Mat convolution_image(const cv::Mat& image );
+	void symmetric_boundary(cv::Mat &image, int scale);
 	void run_algorithm();
 
-	Mat get_enhanced_image();  
+	cv::Mat get_enhanced_image();  
 };
 #endif  //_LOCAL_CONTRAST_ENHANCEMENT_H_
