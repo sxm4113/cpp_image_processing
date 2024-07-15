@@ -1,26 +1,24 @@
 #include "Image.h"
 
-std::ostream& operator<< (std::ostream & os, const Image& obj) {
-    os << " Image: " << obj.img_dir;
-    return os;
+std::ostream& operator<<(std::ostream& os, const Image& obj) {
+  os << " Image: " << obj.img_dir;
+  return os;
 }
 
-//constructor 
+// constructor
 Image::Image(std::string imagePath) {
-    img_dir = imagePath;
-    image = cv::imread(imagePath,cv::IMREAD_GRAYSCALE);  
+  img_dir = imagePath;
+  image = cv::imread(imagePath, cv::IMREAD_GRAYSCALE);
 }
- 
-//constructor 
-Image::Image (cv::Mat img): img_dir(" "), image(img) {}
- 
-//descructor
+
+// constructor
+Image::Image(cv::Mat img) : img_dir(" "), image(img) {}
+
+// descructor
 Image::~Image() {}
 
-//display image
-void Image::display() {
-    cv::imshow("Display Window", image);
-}
+// display image
+void Image::display() { cv::imshow("Display Window", image); }
 
 int Image::get_rows() { return image.rows; }
 int Image::get_cols() { return image.cols; }

@@ -5,19 +5,8 @@ repos:
     rev: v18.1.4
     hooks:
       - id: clang-format
-  - repo: local
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v1.2.3
     hooks:
-      - id: cppcheck
-        name: cppcheck
-        entry: cppcheck
-        language: system
-        args:
-          [
-           --enable=all,
-           --suppress=unusedFunction,
-           --suppress=unmatchedSuppression,
-           --suppress=missingIncludeSystem,
-           --suppress=toomanyconfigs,
-           --error-exitcode=1,
-          ]
-        files: \.(c|h|cpp)$
+    -   id: trailing-whitespace

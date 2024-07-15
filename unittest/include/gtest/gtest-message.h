@@ -61,14 +61,14 @@
 
 #include "absl/strings/has_absl_stringify.h"
 #include "absl/strings/str_cat.h"
-#endif  // GTEST_HAS_ABSL
+#endif // GTEST_HAS_ABSL
 
 GTEST_DISABLE_MSC_WARNINGS_PUSH_(4251 \
 /* class A needs to have dll-interface to be used by clients of class B */)
 
 // Ensures that there is at least one operator<< in the global namespace.
 // See Message& operator<<(...) below for why.
-void operator<<(const testing::internal::Secret&, int);
+void operator<<(const testing::internal::Secret &, int);
 
 namespace testing {
 
@@ -99,38 +99,37 @@ namespace testing {
 // class hides this difference by treating a NULL char pointer as
 // "(null)".
 class GTEST_API_ Message {
- private:
+private:
   // The type of basic IO manipulators (endl, ends, and flush) for
   // narrow streams.
-  typedef std::ostream& (*BasicNarrowIoManip)(std::ostream&);
+  typedef std::ostream &(*BasicNarrowIoManip)(std::ostream &);
 
- public:
+public:
   // Constructs an empty Message.
   Message();
 
   // Copy constructor.
-  Message(const Message& msg) : ss_(new ::std::stringstream) {  // NOLINT
+  Message(const Message &msg) : ss_(new ::std::stringstream) { // NOLINT
     *ss_ << msg.GetString();
   }
 
   // Constructs a Message from a C-string.
-  explicit Message(const char* str) : ss_(new ::std::stringstream) {
+  explicit Message(const char *str) : ss_(new ::std::stringstream) {
     *ss_ << str;
   }
 
   // Streams a non-pointer value to this object. If building a version of
   // GoogleTest with ABSL, this overload is only enabled if the value does not
   // have an AbslStringify definition.
-  template <
-      typename T
+  template <typename T
 #ifdef GTEST_HAS_ABSL
-      ,
-      typename std::enable_if<!absl::HasAbslStringify<T>::value,  // NOLINT
-                              int>::type = 0
-#endif  // GTEST_HAS_ABSL
-      >
-  inline Message& operator<<(const T& val) {
-        // Some libraries overload << for STL containers.  These
+            ,
+            typename std::enable_if<!absl::HasAbslStringify<T>::value, // NOLINT
+                                    int>::type = 0
+#endif // GTEST_HAS_ABSL
+            >
+  inline Message &operator<<(const T &val) {
+    // Some libraries overload << for STL containers.  These
     // overloads are defined in the global namespace instead of ::std.
     //
     // C++'s symbol lookup rule (i.e. Koenig lookup) says that these
@@ -153,16 +152,16 @@ class GTEST_API_ Message {
   // Streams a non-pointer value with an AbslStringify definition to this
   // object.
   template <typename T,
-            typename std::enable_if<absl::HasAbslStringify<T>::value,  // NOLINT
+            typename std::enable_if<absl::HasAbslStringify<T>::value, // NOLINT
                                     int>::type = 0>
-  inline Message& operator<<(const T& val) {
+  inline Message &operator<<(const T &val) {
     // ::operator<< is needed here for a similar reason as with the non-Abseil
     // version above
     using ::operator<<;
     *ss_ << absl::StrCat(val);
     return *this;
   }
-#endif  // GTEST_HAS_ABSL
+#endif // GTEST_HAS_ABSL
 
   // Streams a pointer value to this object.
   //
@@ -178,7 +177,7 @@ class GTEST_API_ Message {
   // ensure consistent result across compilers, we always treat NULL
   // as "(null)".
   template <typename T>
-  inline Message& operator<<(T* const& pointer) {  // NOLINT
+  inline Message &operator<<(T *const &pointer) { // NOLINT
     if (pointer == nullptr) {
       *ss_ << "(null)";
     } else {
@@ -193,24 +192,24 @@ class GTEST_API_ Message {
   // templatized version above.  Without this definition, streaming
   // endl or other basic IO manipulators to Message will confuse the
   // compiler.
-  Message& operator<<(BasicNarrowIoManip val) {
+  Message &operator<<(BasicNarrowIoManip val) {
     *ss_ << val;
     return *this;
   }
 
   // Instead of 1/0, we want to see true/false for bool values.
-  Message& operator<<(bool b) { return *this << (b ? "true" : "false"); }
+  Message &operator<<(bool b) { return *this << (b ? "true" : "false"); }
 
   // These two overloads allow streaming a wide C string to a Message
   // using the UTF-8 encoding.
-  Message& operator<<(const wchar_t* wide_c_str);
-  Message& operator<<(wchar_t* wide_c_str);
+  Message &operator<<(const wchar_t *wide_c_str);
+  Message &operator<<(wchar_t *wide_c_str);
 
 #if GTEST_HAS_STD_WSTRING
   // Converts the given wide string to a narrow string using the UTF-8
   // encoding, and streams the result to this Message object.
-  Message& operator<<(const ::std::wstring& wstr);
-#endif  // GTEST_HAS_STD_WSTRING
+  Message &operator<<(const ::std::wstring &wstr);
+#endif // GTEST_HAS_STD_WSTRING
 
   // Gets the text streamed to this object so far as an std::string.
   // Each '\0' character in the buffer is replaced with "\\0".
@@ -218,17 +217,17 @@ class GTEST_API_ Message {
   // INTERNAL IMPLEMENTATION - DO NOT USE IN A USER PROGRAM.
   std::string GetString() const;
 
- private:
+private:
   // We'll hold the text streamed to this object here.
-  const std::unique_ptr< ::std::stringstream> ss_;
+  const std::unique_ptr<::std::stringstream> ss_;
 
   // We declare (but don't implement) this to prevent the compiler
   // from implementing the assignment operator.
-  void operator=(const Message&);
+  void operator=(const Message &);
 };
 
 // Streams a Message to an ostream.
-inline std::ostream& operator<<(std::ostream& os, const Message& sb) {
+inline std::ostream &operator<<(std::ostream &os, const Message &sb) {
   return os << sb.GetString();
 }
 
@@ -238,14 +237,13 @@ namespace internal {
 // converted to "(null)".  When the input value is a ::string,
 // ::std::string, ::wstring, or ::std::wstring object, each NUL
 // character in it is replaced with "\\0".
-template <typename T>
-std::string StreamableToString(const T& streamable) {
+template <typename T> std::string StreamableToString(const T &streamable) {
   return (Message() << streamable).GetString();
 }
 
-}  // namespace internal
-}  // namespace testing
+} // namespace internal
+} // namespace testing
 
-GTEST_DISABLE_MSC_WARNINGS_POP_()  //  4251
+GTEST_DISABLE_MSC_WARNINGS_POP_() //  4251
 
-#endif  // GOOGLETEST_INCLUDE_GTEST_GTEST_MESSAGE_H_
+#endif // GOOGLETEST_INCLUDE_GTEST_GTEST_MESSAGE_H_
