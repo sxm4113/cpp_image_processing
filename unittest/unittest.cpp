@@ -1,7 +1,8 @@
-#include "../cpp_image_processing/Image.cpp"
-#include "Local_contrast_enhancement.h"
+#include "../cpp_image_processing/Image.cpp" 
+#include "../cpp_image_processing/util.h" 
 
 #include "gtest/gtest.h"
+#include <opencv2/opencv.hpp>
 
 TEST(ImageTest,get_rows)
 {
@@ -17,15 +18,15 @@ TEST(ImageTest,get_cols)
 	EXPECT_EQ(peri,1280);
 
 }
-
-TEST(LocalContrastEnhancementTest,symmetric_boundary)
+ 
+TEST(UtilTEST, symmetric_boundary)
 {
-	Mat Z = Mat::zeros(10,10);
-	Image img(Z);
-	LocalContrastEnhancement test_obj(img);
-	test_obj.symmetric_boundary
-	const int C.row = img.get_cols();
-	EXPECT_EQ(peri,1280);
+	Mat z = Mat::zeros(10,10, CV_8UC1);
+	Image test_obj(z);
+	symmetric_boundary(z,5);
+	const int col = z.cols;
+	const int row = z.rows;
 
-}
-
+	EXPECT_EQ(col,14);
+	EXPECT_EQ(row,15);
+} 

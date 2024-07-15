@@ -7,8 +7,9 @@ using namespace cv;
 /*add extra rows and cols (padding)*/
 //input : full size image, size of filter
 //output : padded image.
-Mat symmetric_boundary(Mat &image, int scale) {
-
+ 
+void symmetric_boundary(Mat &image, int scale) {
+ 
     int height_symm = image.rows;
     int width_symm = image.cols;
 
@@ -35,6 +36,6 @@ Mat symmetric_boundary(Mat &image, int scale) {
         //bottom right corner
         image(Range(height_symm - extra, height_symm), Range(width_symm - extra, width_symm)).copyTo(image_symmetric(Range(height_symm + extra, height_symm + extra * 2), Range(width_symm + extra, width_symm + extra * 2)));
     }
-    std::cout<<"height: "<<image_symmetric.rows<< "width: "<<image_symmetric.cols<<std::endl;
-    return image_symmetric;
+ 
+    image = image_symmetric; 
 }

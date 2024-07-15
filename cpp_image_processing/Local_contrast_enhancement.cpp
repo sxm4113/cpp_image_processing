@@ -37,9 +37,7 @@ Mat LocalContrastEnhancement::downsample(const Mat& original_image)
  
     return downsampled_image;
 }
-
-
-
+ 
 /*calculate convolution*/
 //input : 5 by 5 image, filter
 //output : pixel value of the center of 5 by 5 image. 
