@@ -4,12 +4,15 @@ std::ostream& operator<< (std::ostream & os, const Image& obj) {
     os << " Image: " << obj.img_dir;
     return os;
 }
- 
+
+//constructor 
 Image::Image(std::string imagePath) {
     img_dir = imagePath;
     image = cv::imread(imagePath,cv::IMREAD_GRAYSCALE);  
 }
-     
+//constructor 
+Image::Image (cv::Mat img): img_dir(" "), image(img) {}
+
 //descructor
 Image::~Image() {}
 

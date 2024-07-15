@@ -1,5 +1,8 @@
 #include "../cpp_image_processing/Image.cpp"
+#include "../cpp_image_processing/util.h"
+
 #include "gtest/gtest.h"
+#include <opencv2/opencv.hpp>
 
 TEST(ImageTest,get_rows)
 {
@@ -16,3 +19,14 @@ TEST(ImageTest,get_cols)
 
 }
 
+TEST(UtilTEST, symmetric_boundary)
+{
+	Mat z = Mat::zeros(10,10, CV_8UC1);
+	Image test_obj(z);
+	symmetric_boundary(z,5);
+	const int col = z.cols;
+	const int row = z.rows;
+
+	EXPECT_EQ(col,14);
+	EXPECT_EQ(row,15);
+}
