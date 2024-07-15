@@ -1,7 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include <opencv2/opencv.hpp>
+#include <opencv2/opencv.hpp> 
+
 using namespace cv;
 
 /*add extra rows and cols (padding)*/
@@ -38,4 +39,37 @@ void symmetric_boundary(Mat &image, int scale) {
     }
  
     image = image_symmetric; 
+}
+
+/*expand the size of image*/
+Mat upsample(const Mat &original_image){
+
+    int h = original_image.rows;
+    int w = original_image.cols;
+
+    Mat upsampled_image = Mat::zeros(h, w, CV_8U);
+    for (int i = 0; i < w; i += 2)
+    {
+        for (int j = 0; j < h; j += 2)
+        {
+            upsampled_image.at<uchar>(j, i) = original_image.at<uchar>(j / 2, i / 2);
+        }
+    }
+    return upsampled_image;
+}
+
+/*shrink the size of image*/
+Mat downsample(const Mat& original_image){
+
+    int h = original_image.rows;
+    int w =  original_image.cols;
+
+    Mat downsampled_image = Mat::zeros(h / 2, w / 2, CV_8U);
+ 
+    for (int i = 0; i < w; i += 2)
+        for (int j = 0; j < h; j += 2)
+            if (i%2 == 0 && j%2 == 0)
+                downsampled_image.at<uchar>(j/2, i/2) = original_image.at<uchar>(j, i);
+ 
+    return downsampled_image;
 }

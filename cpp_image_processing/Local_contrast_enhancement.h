@@ -15,9 +15,7 @@ public:
 	explicit LocalContrastEnhancement(Image& img);
  
 	void adjustment(cv::Mat& original_image, const cv::Mat& rolp_result);
-    cv::Mat rolp(const cv::Mat&  original_image, const cv::Mat& expanded);
-    cv::Mat upsample(const cv::Mat& original_image);
-	cv::Mat downsample(const cv::Mat& original_image); 
+    cv::Mat rolp(const cv::Mat&  original_image, const cv::Mat& expanded); 
 	cv::Mat convolution_image(const cv::Mat& image );
  
 	void run_algorithm();

@@ -23,20 +23,6 @@ void LocalContrastEnhancement::run_algorithm() {
 };
 
 Mat LocalContrastEnhancement::get_enhanced_image() {return enhanced_image;}
-
-/*shrink the size of image*/
-Mat LocalContrastEnhancement::downsample(const Mat& original_image)
-{
-     
-    Mat downsampled_image = Mat::zeros(HEIGHT / 2, WIDTH / 2, CV_8U);
- 
-    for (int i = 0; i < WIDTH; i += 2)
-        for (int j = 0; j < HEIGHT; j += 2)
-            if (i%2 == 0 && j%2 == 0)
-                downsampled_image.at<uchar>(j/2, i/2) = original_image.at<uchar>(j, i);
- 
-    return downsampled_image;
-}
  
 /*calculate convolution*/
 //input : 5 by 5 image, filter
@@ -77,20 +63,6 @@ Mat LocalContrastEnhancement::convolution_image(const Mat &image )
         }
     }
     return output;
-}
-
-/*expand the size of image*/
-Mat LocalContrastEnhancement::upsample(const Mat &original_image)
-{
-    Mat upsampled_image = Mat::zeros(HEIGHT, WIDTH, CV_8U);
-    for (int i = 0; i < WIDTH; i += 2)
-    {
-        for (int j = 0; j < HEIGHT; j += 2)
-        {
-            upsampled_image.at<uchar>(j, i) = original_image.at<uchar>(j / 2, i / 2);
-        }
-    }
-    return upsampled_image;
 }
 
 /*find ROLP (ratio of lowpass)*/
