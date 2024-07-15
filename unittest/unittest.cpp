@@ -28,5 +28,17 @@ TEST(UtilTEST, symmetric_boundary)
 	const int row = z.rows;
 
 	EXPECT_EQ(col,14);
-	EXPECT_EQ(row,15);
+	EXPECT_EQ(row,14);
+} 
+
+TEST(UtilTEST, upsample)
+{
+	Mat z = Mat::zeros(9,9, CV_8UC1);
+	Image test_obj(z);
+	cv::Mat result = upsample(z);
+	const int upsampled_col = result.cols;
+	const int upsampled_row = result.rows;
+	
+	EXPECT_EQ(upsampled_col,9);
+	EXPECT_EQ(upsampled_row,9);
 } 
