@@ -13,14 +13,13 @@ private:
 public:
 	/// constructor</summary>
 	explicit LocalContrastEnhancement(Image& img);
-
-	void HistEqualization(cv::Mat &img);
+ 
 	void adjustment(cv::Mat& original_image, const cv::Mat& rolp_result);
-        cv::Mat rolp(const cv::Mat& original_image, const cv::Mat& expanded);
-        cv::Mat upsample(const cv::Mat& original_image);
+    cv::Mat rolp(const cv::Mat&  original_image, const cv::Mat& expanded);
+    cv::Mat upsample(const cv::Mat& original_image);
 	cv::Mat downsample(const cv::Mat& original_image); 
 	cv::Mat convolution_image(const cv::Mat& image );
-	void symmetric_boundary(cv::Mat &image, int scale);
+	// void symmetric_boundary(cv::Mat &image, int scale);
 	void run_algorithm();
 
 	cv::Mat get_enhanced_image();

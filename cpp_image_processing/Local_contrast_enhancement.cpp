@@ -1,4 +1,5 @@
 #include "Local_contrast_enhancement.h"
+#include "util.h"
 
 using namespace cv;
 
@@ -37,39 +38,7 @@ Mat LocalContrastEnhancement::downsample(const Mat& original_image)
     return downsampled_image;
 }
 
-/*add extra rows and cols (padding)*/
-//input : full size image, size of filter
-//output : padded image.
-void LocalContrastEnhancement::symmetric_boundary(Mat &image, int scale) {
 
-    int height_symm = image.rows;
-    int width_symm = image.cols;
-
-    int extra{ (scale - 1) / 2 };
-    cv::Mat image_symmetric = cv::Mat::zeros(height_symm + 2 * extra, width_symm + 2 * extra, CV_8U);
-
-    image.copyTo(image_symmetric(cv::Rect(extra, extra, width_symm, height_symm)));
-
-    for (int i = 0; i < extra; i++) {
-        //first row
-        image.rowRange(i, i + 1).copyTo(image_symmetric(Range(i, i + 1), Range(extra, width_symm + extra)));
-        //first column
-        image.colRange(i, i + 1).copyTo(image_symmetric(Range(extra, height_symm + extra), Range(i, i + 1)));
-        //last row
-        image.rowRange(height_symm - (i + 1), height_symm - i).copyTo(image_symmetric(Range((height_symm + extra * 2) - (i + 1), (height_symm + extra * 2) - i), Range(extra, width_symm + extra)));
-        //last column
-        image.colRange(width_symm - (i + 1), width_symm - i).copyTo(image_symmetric(Range(extra, height_symm + extra), Range((width_symm + extra * 2) - (i + 1), (width_symm + extra * 2) - i)));
-        //top left corner
-        image(Range(0, extra), Range(0, extra)).copyTo(image_symmetric(Range(0, extra), Range(0, extra)));
-        //bottom left corner
-        image(Range(height_symm - extra, height_symm), Range(0, extra)).copyTo(image_symmetric(Range(height_symm + extra, height_symm + extra * 2), Range(0, extra)));
-        //top right corner
-        image(Range(0, extra), Range(width_symm - extra, width_symm)).copyTo(image_symmetric(Range(0, extra), Range(width_symm + extra, width_symm + extra * 2)));
-        //bottom right corner
-        image(Range(height_symm - extra, height_symm), Range(width_symm - extra, width_symm)).copyTo(image_symmetric(Range(height_symm + extra, height_symm + extra * 2), Range(width_symm + extra, width_symm + extra * 2)));
-    }
-    image = image_symmetric;
-}
 
 /*calculate convolution*/
 //input : 5 by 5 image, filter
@@ -136,21 +105,11 @@ Mat LocalContrastEnhancement::rolp(const Mat &original_image, const Mat &expande
     expanded.convertTo(float_expanded, CV_32FC1);
     original_image.convertTo(float_original_image, CV_32FC1);
 
-    // First, I must loop through and multiply each element in the original_image by 4.0
-    // but stackoverflow says that opencv supports scalar and matrix multiplication
-     //expanded_times4 = 4.0 * expanded;
-    // Now, divide each element of the original image by its respective element in output and assign the result to output
-    //cv::divide(original_image, expanded_times4, output); // for some reason this just results in a black image
-    // so maybe I'll write the element-wise division from scratch instead
-    // iterate through each pixel in original_image, divide it by its respective pixel in expanded_times4, and store the result in the respective pixel of output
     for (int j = 0; j < original_image.rows; j++) {
         for (int i = 0; i < original_image.cols; i++) {
 
             output.at<float>(j, i) = float_original_image.at<float>(j, i) / (4.0 * float_expanded.at<float>(j, i));
 
-            // this had division by 0, but it's probably because we haven't added the boundary_sym function yet, so there are zeroes at the boundaries
-            // update: we've added the symmetric boundary function but it's still claiming error: unhandled excpetion 0xC0000094: Integer deivision, which is division by zero
-            // so there must be some pixel in expanded_times4 that is zero
         }
     }
 

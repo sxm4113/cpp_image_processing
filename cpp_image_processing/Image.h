@@ -14,6 +14,7 @@ class Image {
 
    public:
     explicit Image(std::string imagePath);
+    Image(cv::Mat img);
     ~Image();
     void display();
     cv::Mat get_image();
